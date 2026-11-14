@@ -1,0 +1,26 @@
+{
+  "name": "carryam-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CarryAm — Peer-to-Peer Intercity & Cross-Border Delivery Platform",
+  "workspaces": [
+    "apps/web",
+    "packages/shared"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build:web": "npm run build --workspace=apps/web",
+    "test": "node --test packages/shared/test/*.test.js apps/web/test/*.test.js",
+    "lint": "npm run lint --workspaces"
+  },
+  "keywords": [
+    "logistics",
+    "peer-to-peer",
+    "nigeria",
+    "postgis",
+    "supabase",
+    "nextjs"
+  ],
+  "author": "CarryAm Engineering Team",
+  "license": "UNLICENSED"
+}
