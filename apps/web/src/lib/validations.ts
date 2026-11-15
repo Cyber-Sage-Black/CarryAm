@@ -148,6 +148,28 @@ export const withdrawalSchema = z.object({
 });
 
 // -------------------------------------------------------------------
+// KYC / Identity Verification
+// -------------------------------------------------------------------
+
+export const idTypeSchema = z.enum([
+  'NIN',
+  'BVN',
+  'DRIVERS_LICENSE',
+  'VOTERS_CARD',
+  'PASSPORT',
+]);
+
+export const kycTierSchema = z.enum(['TIER_1', 'TIER_2']);
+
+export const kycVerificationSchema = z.object({
+  idType: idTypeSchema,
+  idNumber: z.string().min(5, 'ID number must be at least 5 characters').max(30),
+  targetTier: kycTierSchema,
+  documentUrl: z.string().url().optional(),
+  selfieUrl: z.string().url().optional(),
+});
+
+// -------------------------------------------------------------------
 // Type exports for use in components
 // -------------------------------------------------------------------
 
@@ -160,3 +182,4 @@ export type FundEscrowInput = z.infer<typeof fundEscrowSchema>;
 export type VerifyHandoverInput = z.infer<typeof verifyHandoverSchema>;
 export type VerifyDeliveryInput = z.infer<typeof verifyDeliverySchema>;
 export type WithdrawalInput = z.infer<typeof withdrawalSchema>;
+export type KycVerificationInput = z.infer<typeof kycVerificationSchema>;

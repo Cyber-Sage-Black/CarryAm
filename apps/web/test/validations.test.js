@@ -36,6 +36,24 @@ const verifyHandoverSchema = z.object({
   sealSerialNumber: z.string().min(5).max(30),
 });
 
+const idTypeSchema = z.enum([
+  'NIN',
+  'BVN',
+  'DRIVERS_LICENSE',
+  'VOTERS_CARD',
+  'PASSPORT',
+]);
+
+const kycTierSchema = z.enum(['TIER_1', 'TIER_2']);
+
+const kycVerificationSchema = z.object({
+  idType: idTypeSchema,
+  idNumber: z.string().min(5, 'ID number must be at least 5 characters').max(30),
+  targetTier: kycTierSchema,
+  documentUrl: z.string().url().optional(),
+  selfieUrl: z.string().url().optional(),
+});
+
 describe('CarryAm Boundary Validation (Zod)', () => {
   test('validates Nigerian phone number format strictly (+234 followed by 10 digits)', () => {
     assert.equal(nigerianPhone.safeParse('+2348031112222').success, true);
@@ -91,5 +109,41 @@ describe('CarryAm Boundary Validation (Zod)', () => {
     assert.equal(verifyHandoverSchema.safeParse({ ...valid, otp: '481a' }).success, false);
     // Non-uuid agreement ID
     assert.equal(verifyHandoverSchema.safeParse({ ...valid, agreementId: 'agr_001' }).success, false);
+  });
+
+  test('validates KYC verification payload structure and target tiers', () => {
+    const validKyc = {
+      idType: 'NIN',
+      idNumber: '12345678901',
+      targetTier: 'TIER_1',
+    };
+    assert.equal(kycVerificationSchema.safeParse(validKyc).success, true);
+
+    const validTier2 = {
+      idType: 'DRIVERS_LICENSE',
+      idNumber: 'ABC12345678',
+      targetTier: 'TIER_2',
+      documentUrl: 'https://example.com/dl.jpg',
+      selfieUrl: 'https://example.com/selfie.jpg',
+    };
+    assert.equal(kycVerificationSchema.safeParse(validTier2).success, true);
+
+    // Invalid target tier
+    assert.equal(
+      kycVerificationSchema.safeParse({
+        ...validKyc,
+        targetTier: 'TIER_99',
+      }).success,
+      false,
+    );
+
+    // Invalid ID type
+    assert.equal(
+      kycVerificationSchema.safeParse({
+        ...validKyc,
+        idType: 'SCHOOL_ID',
+      }).success,
+      false,
+    );
   });
 });

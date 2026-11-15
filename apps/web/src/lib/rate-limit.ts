@@ -103,3 +103,8 @@ export const paymentLimiter = createRateLimiter({
   maxRequests: 5,
   windowMs: 300_000, // 5 payment attempts per 5 minutes
 });
+
+export const kycLimiter = createRateLimiter({
+  maxRequests: 5,
+  windowMs: 300_000, // 5 KYC attempts per 5 minutes
+});
