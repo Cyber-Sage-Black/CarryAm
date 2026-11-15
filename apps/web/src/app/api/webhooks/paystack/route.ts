@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     return apiError('Missing webhook signature', 401);
   }
 
-  const secret = process.env.PAYSTACK_WEBHOOK_SECRET;
+  const secret = process.env.PAYSTACK_WEBHOOK_SECRET || process.env.PAYSTACK_SECRET_KEY;
   if (!secret) {
     return apiError('Webhook secret unconfigured', 500);
   }
